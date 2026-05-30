@@ -37,7 +37,7 @@ async function analyzeRoadCondition(imageBuffer, fileName = '') {
 
   // Local Simulation Mode (Simulates reading the image characteristics)
   return new Promise((resolve) => {
-    // Artificial processing latency of 1.2s to simulate inference time
+    // Artificial processing latency of 50ms to simulate fast inference time
     setTimeout(() => {
       // Analyze file characteristics to make mock classification dynamic
       const fileLength = imageBuffer.length;
@@ -101,9 +101,9 @@ async function analyzeRoadCondition(imageBuffer, fileName = '') {
         description: description,
         confidence: Math.round(confidence * 1000) / 10, // format: 94.2
         detections: bbox,
-        inferenceTimeMs: 1200
+        inferenceTimeMs: 50
       });
-    }, 1200);
+    }, 50);
   });
 }
 
