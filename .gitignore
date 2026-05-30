@@ -1,0 +1,9 @@
+node_modules/
+public/uploads/NHAI-*
+public/pdfs/NHAI-*
+public/pdfs/TEST-COMPLAINT.pdf
+sent_emails/email_*
+sent_emails/activity_log.json
+data/complaints.json
+.DS_Store
+.env
