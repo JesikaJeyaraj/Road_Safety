@@ -47,6 +47,27 @@ This codebase acts as the central integration base for our project. Here is how 
 
 ---
 
+---
+
+## 📝 Recent Updates & Bug Fixes
+
+### ✅ Filing Error Resolution (June 2026)
+**Issue**: "Filing Error: Failed to fetch" when submitting complaints  
+**Root Cause**: PDF service crashed due to missing null-checks on `complaint.metadataResults` when processing edge cases (missing EXIF data)  
+**Fix Applied**:
+- Added optional chaining (`?.`) and fallback values in `pdfService.js` footer generation
+- Improved error logging in `server.js` with full stack traces
+- Fixed file extension parsing to handle missing `originalname` properties
+- Tested end-to-end: Complaint submission now succeeds with proper 201 response
+
+**Current Status**: ✅ All complaint filing workflows operational
+- GPS-tagged photos: Full validation and email routing
+- EXIF-stripped images: Properly flagged as "Flagged for Review"
+- PDF generation: Working with safe metadata fallbacks
+- Email dispatch: Successfully routed to PIU offices
+
+---
+
 ## ⚙️ Installation & Running the Application
 
 Ensure you have [Node.js](https://nodejs.org/) installed, then follow these steps:
@@ -127,3 +148,44 @@ Road safety 1/
 5. **Review Outputs**:
    * Inspect the formatted PDF letters inside `public/pdfs/`.
    * Open the mock HTML email dispatches in the `sent_emails/` folder to review what details route to the Project Directors.
+
+---
+
+## 🐛 Troubleshooting & Common Issues
+
+### Issue: "Filing Error: Failed to fetch"
+**Status**: ✅ RESOLVED  
+**Solution**: Ensure the server is running with the latest code. The issue was caused by missing null-safety checks in PDF generation when handling missing EXIF metadata.
+
+### Issue: Server crashes on startup
+**Check**: Verify all dependencies are installed:
+```bash
+npm install
+```
+
+### Issue: Port 3000 already in use
+**Solution**: Kill the existing process or use a different port by setting the `PORT` environment variable:
+```bash
+PORT=4000 npm start
+```
+
+### Issue: Images not uploading
+**Check**: 
+- Ensure the `public/uploads/` directory exists (created automatically on first run)
+- Check browser console for fetch errors (F12 → Network tab)
+- Verify the file size is under 10MB (configured in `server.js`)
+
+### Issue: PDFs not generating
+**Check**: 
+- Ensure `public/pdfs/` directory is writable
+- Check that complaint data is being saved to `data/complaints.json`
+- Review server logs for detailed error messages
+
+---
+
+## 📧 Support & Contributions
+
+For issues or feature requests, please open a GitHub issue on the [Road Safety repository](https://github.com/JesikaJeyaraj/Road_Safety.git).
+
+**Last Updated**: June 11, 2026  
+**Status**: Fully Operational ✅
