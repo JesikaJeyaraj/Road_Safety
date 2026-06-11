@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NHAI Citizen Safety & Road Defect Portal</title>
+  <title data-i18n="title">NHAI Citizen Safety & Road Defect Portal</title>
   <meta name="description" content="File road safety reports, verify image integrity, automatically route letters to NHAI Project units.">
   
   <!-- CSS Stylesheet -->
@@ -18,21 +18,31 @@
     <div class="header-container">
       <div class="logo">
         <div class="logo-icon">▲</div>
-        <span>NHAI Citizen Safety Portal</span>
+        <span data-i18n="header_title">NHAI Citizen Safety Portal</span>
       </div>
       <nav>
-        <button class="nav-tab active" id="tab-report-btn" onclick="switchTab('report')">Report Issue</button>
-        <button class="nav-tab" id="tab-track-btn" onclick="switchTab('track')">Track Complaint</button>
-        <button class="nav-tab" id="tab-admin-btn" onclick="switchTab('admin')">Admin Panel</button>
+        <button class="nav-tab active" id="tab-report-btn" onclick="switchTab('report')" data-i18n="tab_report">Report Issue</button>
+        <button class="nav-tab" id="tab-track-btn" onclick="switchTab('track')" data-i18n="tab_track">Track Complaint</button>
+        <button class="nav-tab" id="tab-admin-btn" onclick="switchTab('admin')" data-i18n="tab_admin">Admin Panel</button>
       </nav>
+      <!-- Language Selector -->
+      <div class="lang-selector-container">
+        <select id="lang-switch" class="lang-select" onchange="changeLanguage(this.value)">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="ta">தமிழ்</option>
+          <option value="te">తెలుగు</option>
+          <option value="kn">ಕನ್ನಡ</option>
+        </select>
+      </div>
     </div>
   </header>
 
   <main>
     <!-- TAB 1: REPORT ISSUE -->
     <section id="tab-report" class="tab-content active">
-      <h1>Report Road Defect</h1>
-      <p class="subtitle">Upload a geotagged photo of highway damage. Our system will verify its location and route a formal complaint letter to the respective NHAI PIU.</p>
+      <h1 data-i18n="report_title">Report Road Defect</h1>
+      <p class="subtitle" data-i18n="report_subtitle">Upload a geotagged photo of highway damage. Our system will verify its location and route a formal complaint letter to the respective NHAI PIU.</p>
       
       <div class="grid-container">
         <!-- Form Block -->
@@ -40,34 +50,34 @@
           <form id="complaint-form" onsubmit="submitComplaint(event)">
             
             <div class="form-group">
-              <label class="form-label" for="category-select">Issue Category</label>
+              <label class="form-label" for="category-select" data-i18n="label_category">Issue Category</label>
               <select class="form-select" id="category-select" required>
-                <option value="" disabled selected>Select road damage type</option>
-                <option value="pothole">Pothole (Structural Base Failure)</option>
-                <option value="cracks">Cracking / Pavement Fatigue</option>
-                <option value="faded_markings">Faded Lane Markings</option>
-                <option value="debris">Debris / Roadway Obstruction</option>
-                <option value="other">Other Road Hazard</option>
+                <option value="" disabled selected data-i18n="select_default">Select road damage type</option>
+                <option value="pothole" data-i18n="option_pothole">Pothole (Structural Base Failure)</option>
+                <option value="cracks" data-i18n="option_cracks">Cracking / Pavement Fatigue</option>
+                <option value="faded_markings" data-i18n="option_markings">Faded Lane Markings</option>
+                <option value="debris" data-i18n="option_debris">Debris / Roadway Obstruction</option>
+                <option value="other" data-i18n="option_other">Other Road Hazard</option>
               </select>
             </div>
             
             <div class="form-group">
-              <label class="form-label" for="description-input">Description / Details</label>
+              <label class="form-label" for="description-input" data-i18n="label_details">Description / Details</label>
               <textarea class="form-textarea" id="description-input" placeholder="Provide details (e.g. landmark, Highway name, size of pothole, lane side) to assist maintenance units..." required></textarea>
             </div>
             
             <div class="form-group">
-              <label class="form-label">Evidence Media (Photo/Video)</label>
+              <label class="form-label" data-i18n="label_evidence">Evidence Media (Photo/Video)</label>
               <div class="upload-zone" id="drop-zone" onclick="triggerFileInput()">
                 <div class="upload-icon">↑</div>
-                <p class="upload-text-main">Drag & drop your photo here</p>
-                <p class="upload-text-sub">or click to browse from device (JPEG/PNG, max 10MB)</p>
+                <p class="upload-text-main" id="drop-text-main" data-i18n="drag_drop">Drag & drop your photo here</p>
+                <p class="upload-text-sub" id="drop-text-sub" data-i18n="browse_text">or click to browse from device (JPEG/PNG, max 10MB)</p>
                 <input type="file" id="media-file" class="file-input" accept="image/jpeg,image/png" onchange="handleFileSelect(event)">
               </div>
             </div>
 
             <button type="submit" class="btn" id="submit-btn" disabled>
-              <span>Submit Verified Complaint</span>
+              <span id="btn-submit-text" data-i18n="btn_submit">Submit Verified Complaint</span>
             </button>
             
           </form>
@@ -76,8 +86,8 @@
         <!-- Verification/Realtime Preview Block -->
         <div class="glass-card" style="display: flex; flex-direction: column;">
           <div class="verification-header">
-            <span class="verification-title">Evidence & Geo-tags Analysis</span>
-            <span id="analysis-badge" class="badge badge-neutral">No media selected</span>
+            <span class="verification-title" data-i18n="analysis_title">Evidence & Geo-tags Analysis</span>
+            <span id="analysis-badge" class="badge badge-neutral" data-i18n="badge_no_media">No media selected</span>
           </div>
 
           <!-- Image Preview Frame -->
@@ -93,19 +103,19 @@
           <!-- GPS Metadata list details -->
           <div class="verify-checklist">
             <div class="verify-item">
-              <div class="verify-label"><span>📍</span> GPS coordinates:</div>
+              <div class="verify-label"><span data-i18n="label_gps">📍 GPS coordinates:</span></div>
               <div class="verify-val" id="meta-coords">--</div>
             </div>
             <div class="verify-item">
-              <div class="verify-label"><span>📅</span> Capture Time:</div>
+              <div class="verify-label"><span data-i18n="label_time">📅 Capture Time:</span></div>
               <div class="verify-val" id="meta-time">--</div>
             </div>
             <div class="verify-item">
-              <div class="verify-label"><span>📱</span> Device Model:</div>
+              <div class="verify-label"><span data-i18n="label_device">📱 Device Model:</span></div>
               <div class="verify-val" id="meta-device">--</div>
             </div>
             <div class="verify-item">
-              <div class="verify-label"><span>🛠️</span> Editing Software:</div>
+              <div class="verify-label"><span data-i18n="label_software">🛠️ Editing Software:</span></div>
               <div class="verify-val" id="meta-software">--</div>
             </div>
           </div>
@@ -118,13 +128,13 @@
 
     <!-- TAB 2: TRACK COMPLAINT -->
     <section id="tab-track" class="tab-content">
-      <h1>Complaint Tracking Dashboard</h1>
-      <p class="subtitle">Search and monitor the resolution workflow of filed road safety complaints using your Reference ID.</p>
+      <h1 data-i18n="track_title">Complaint Tracking Dashboard</h1>
+      <p class="subtitle" data-i18n="track_subtitle">Search and monitor the resolution workflow of filed road safety complaints using your Reference ID.</p>
       
       <!-- Search -->
       <div class="search-wrapper">
         <input type="text" class="search-input" id="search-id-input" placeholder="Enter Complaint ID (e.g. NHAI-2026-B83A49D0)">
-        <button class="btn search-btn" onclick="trackComplaint()">Search</button>
+        <button class="btn search-btn" onclick="trackComplaint()" data-i18n="btn_search">Search</button>
       </div>
 
       <!-- Tracking Results -->
@@ -133,15 +143,15 @@
           
           <!-- Stepper timeline -->
           <div class="glass-card">
-            <h3>Workflow Resolution Stages</h3>
+            <h3 data-i18n="workflow_stages">Workflow Resolution Stages</h3>
             
             <div class="timeline" id="tracking-timeline">
               <!-- Step 1 -->
               <div class="timeline-step" id="step-submitted">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                  <div class="timeline-title">1. Complaint Registered</div>
-                  <div class="timeline-desc">Defect submitted by citizen and logged in server database.</div>
+                  <div class="timeline-title" data-i18n="stage1_title">1. Complaint Registered</div>
+                  <div class="timeline-desc" data-i18n="stage1_desc">Defect submitted by citizen and logged in server database.</div>
                   <div class="timeline-meta" id="step-submitted-time">--</div>
                 </div>
               </div>
@@ -150,8 +160,8 @@
               <div class="timeline-step" id="step-verified">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                  <div class="timeline-title">2. Integrity & Originality Check</div>
-                  <div class="timeline-desc">Geotags extracted, timestamp checked for age, and unique image hash verified.</div>
+                  <div class="timeline-title" data-i18n="stage2_title">2. Integrity & Originality Check</div>
+                  <div class="timeline-desc" data-i18n="stage2_desc">Geotags extracted, timestamp checked for age, and unique image hash verified.</div>
                   <div class="timeline-meta" id="step-verified-time">--</div>
                 </div>
               </div>
@@ -160,28 +170,28 @@
               <div class="timeline-step" id="step-ai">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                  <div class="timeline-title">3. AI Computer Vision Verification</div>
-                  <div class="timeline-desc">Model scanning isolates exact defect classifications and bounding regions.</div>
+                  <div class="timeline-title" data-i18n="stage3_title">3. AI Computer Vision Verification</div>
+                  <div class="timeline-desc" data-i18n="stage3_desc">Model scanning isolates exact defect classifications and bounding regions.</div>
                   <div class="timeline-meta" id="step-ai-time">--</div>
                 </div>
               </div>
-
+              
               <!-- Step 4 -->
               <div class="timeline-step" id="step-pdf">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                  <div class="timeline-title">4. Complaint Letter Generated</div>
-                  <div class="timeline-desc">Official document created with letterhead stamps and coordinates.</div>
+                  <div class="timeline-title" data-i18n="stage4_title">4. Complaint Letter Generated</div>
+                  <div class="timeline-desc" data-i18n="stage4_desc">Official document created with letterhead stamps and coordinates.</div>
                   <div class="timeline-meta" id="step-pdf-time">--</div>
                 </div>
               </div>
-
+              
               <!-- Step 5 -->
               <div class="timeline-step" id="step-emailed">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
-                  <div class="timeline-title">5. Dispatched to regional NHAI PIU</div>
-                  <div class="timeline-desc" id="dispatch-piu-desc">Emailed to closest Project Director based on GPS boundary mapping.</div>
+                  <div class="timeline-title" data-i18n="stage5_title">5. Dispatched to regional NHAI PIU</div>
+                  <div class="timeline-desc" id="dispatch-piu-desc" data-i18n="stage5_desc">Emailed to closest Project Director based on GPS boundary mapping.</div>
                   <div class="timeline-meta" id="step-emailed-time">--</div>
                 </div>
               </div>
@@ -191,42 +201,76 @@
           <!-- Incident details review panel -->
           <div class="glass-card" style="display: flex; flex-direction: column; gap: 1.25rem;">
             <div class="verification-header">
-              <span class="verification-title" id="track-title-id">Complaint ID: --</span>
+              <span class="verification-title" id="track-title-id" data-i18n="track_id_label">Complaint ID: --</span>
               <span id="track-status-badge" class="badge badge-neutral">--</span>
             </div>
             
             <div style="border-radius: 0.5rem; overflow: hidden; border: 1px solid var(--border-card);">
-              <img src="" id="track-image" alt="Evidence" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+              <img src="" id="track-image" alt="Evidence" style="width: 100%; height: 160px; object-fit: cover; display: block;">
             </div>
 
             <!-- Detail Pills -->
             <div>
               <div class="info-row">
-                <span class="info-label">Category (AI Class):</span>
+                <span class="info-label" data-i18n="info_category">Category (AI Class):</span>
                 <span class="info-value" id="track-val-class">--</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Confidence:</span>
+                <span class="info-label" data-i18n="info_confidence">Confidence:</span>
                 <span class="info-value" id="track-val-confidence">--</span>
               </div>
               <div class="info-row">
-                <span class="info-label">GPS Location:</span>
+                <span class="info-label" data-i18n="info_gps">GPS Location:</span>
                 <span class="info-value gps-link" id="track-val-gps" onclick="showTrackedOnMap()">--</span>
               </div>
               <div class="info-row">
-                <span class="info-label">Routed PIU Office:</span>
+                <span class="info-label" data-i18n="info_piu">Routed PIU Office:</span>
                 <span class="info-value" id="track-val-piu">--</span>
+              </div>
+            </div>
+
+            <!-- Contractor Accountability & Budget Ledger Card -->
+            <div class="contractor-ledger-box" id="track-contractor-section" style="display: none;">
+              <h4 data-i18n="contractor_header">📋 Contractor & Budget Accountability Details</h4>
+              <div class="info-row">
+                <span class="info-label" data-i18n="label_contractor">Contractor Name:</span>
+                <span class="info-value" id="track-val-contractor">--</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" data-i18n="label_budget">Allocated Budget:</span>
+                <span class="info-value highlighted-budget" id="track-val-budget">--</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" data-i18n="label_period">Contract Period:</span>
+                <span class="info-value" id="track-val-period">--</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" data-i18n="label_contract_status">Project Status:</span>
+                <span class="info-value" id="track-val-contract-status">--</span>
+              </div>
+            </div>
+
+            <!-- Hazard Severity Index Rating -->
+            <div class="hazard-level-box" id="track-hazard-section" style="display: none;">
+              <h4 data-i18n="hazard_header">⚠️ Safety Hazard Severity Rating</h4>
+              <div class="info-row">
+                <span class="info-label" data-i18n="label_severity_score">Hazard Index:</span>
+                <span class="info-value" id="track-val-severity-score">--</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label" data-i18n="label_severity_level">Risk Assessment:</span>
+                <span class="info-value" id="track-val-severity-level">--</span>
               </div>
             </div>
 
             <div id="track-flags-container"></div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: auto;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: auto; padding-top: 1rem;">
               <a href="" id="btn-download-pdf" target="_blank" class="btn">
-                <span>View Letter PDF</span>
+                <span data-i18n="btn_view_pdf">View Letter PDF</span>
               </a>
               <a href="" id="btn-view-email" target="_blank" class="btn btn-secondary">
-                <span>Inspect Email log</span>
+                <span data-i18n="btn_inspect_email">Inspect Email log</span>
               </a>
             </div>
           </div>
@@ -237,48 +281,48 @@
 
     <!-- TAB 3: ADMIN PANEL -->
     <section id="tab-admin" class="tab-content">
-      <h1>NHAI Management Dashboard</h1>
-      <p class="subtitle">System administrator oversight, verification auditing, duplicate tracking, and email routing history logs.</p>
+      <h1 data-i18n="admin_title">NHAI Management Dashboard</h1>
+      <p class="subtitle" data-i18n="admin_subtitle">System administrator oversight, verification auditing, duplicate tracking, and email routing history logs.</p>
       
       <!-- Stats Row -->
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-num" id="stat-total" style="color: var(--primary);">0</div>
-          <div class="stat-label">Total Filed</div>
+          <div class="stat-label" data-i18n="stat_total">Total Filed</div>
         </div>
         <div class="stat-card">
           <div class="stat-num" id="stat-verified" style="color: var(--success);">0</div>
-          <div class="stat-label">Verified Original</div>
+          <div class="stat-label" data-i18n="stat_verified">Verified Original</div>
         </div>
         <div class="stat-card">
           <div class="stat-num" id="stat-flagged" style="color: var(--danger);">0</div>
-          <div class="stat-label">Flagged Suspicious</div>
+          <div class="stat-label" data-i18n="stat_flagged">Flagged Suspicious</div>
         </div>
         <div class="stat-card">
           <div class="stat-num" id="stat-routed" style="color: var(--purple);">0</div>
-          <div class="stat-label">Emails Dispatched</div>
+          <div class="stat-label" data-i18n="stat_routed">Emails Dispatched</div>
         </div>
       </div>
 
       <!-- Complaints Table -->
       <div class="glass-card" style="margin-bottom: 2rem;">
-        <h3 style="margin-bottom: 1rem;">Recent Citizens Reports</h3>
+        <h3 style="margin-bottom: 1rem;" data-i18n="recent_reports">Recent Citizens Reports</h3>
         <div class="table-wrapper">
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Complaint ID</th>
-                <th>Category</th>
-                <th>Location (GPS)</th>
-                <th>Originality Score</th>
-                <th>Status</th>
-                <th>Date Filed</th>
-                <th>Actions</th>
+                <th data-i18n="col_id">Complaint ID</th>
+                <th data-i18n="col_category">Category</th>
+                <th data-i18n="col_location">Location (GPS)</th>
+                <th data-i18n="col_score">Originality Score</th>
+                <th data-i18n="col_status">Status</th>
+                <th data-i18n="col_date">Date Filed</th>
+                <th data-i18n="col_actions">Actions</th>
               </tr>
             </thead>
             <tbody id="admin-complaints-table-body">
               <tr>
-                <td colspan="7" style="text-align: center; color: var(--text-secondary);">No complaint submissions found.</td>
+                <td colspan="7" style="text-align: center; color: var(--text-secondary);" data-i18n="no_records">No complaint submissions found.</td>
               </tr>
             </tbody>
           </table>
@@ -287,22 +331,22 @@
 
       <!-- Email dispatch log activity -->
       <div class="glass-card">
-        <h3 style="margin-bottom: 1rem;">Auto-Email Dispatches to PIU Offices</h3>
+        <h3 style="margin-bottom: 1rem;" data-i18n="email_dispatches">Auto-Email Dispatches to PIU Offices</h3>
         <div class="table-wrapper">
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Incident ID</th>
-                <th>Recipient PIU</th>
-                <th>PIU Email Address</th>
-                <th>Email Subject</th>
-                <th>Routed Timestamp</th>
-                <th>Logs</th>
+                <th data-i18n="col_id">Incident ID</th>
+                <th data-i18n="col_recipient">Recipient PIU</th>
+                <th data-i18n="col_address">PIU Email Address</th>
+                <th data-i18n="col_subject">Email Subject</th>
+                <th data-i18n="col_timestamp">Routed Timestamp</th>
+                <th data-i18n="col_logs">Logs</th>
               </tr>
             </thead>
             <tbody id="admin-email-logs-table-body">
               <tr>
-                <td colspan="6" style="text-align: center; color: var(--text-secondary);">No routing activity logs recorded.</td>
+                <td colspan="6" style="text-align: center; color: var(--text-secondary);" data-i18n="no_records">No routing activity logs recorded.</td>
               </tr>
             </tbody>
           </table>
@@ -316,6 +360,9 @@
   
   <!-- Client ExifReader CDN -->
   <script src="https://cdn.jsdelivr.net/npm/exifreader@4.23.3/dist/exif-reader.js"></script>
+
+  <!-- Translations Script -->
+  <script src="/js/translations.js"></script>
 
   <!-- Frontend logic App JS -->
   <script src="/js/app.js"></script>

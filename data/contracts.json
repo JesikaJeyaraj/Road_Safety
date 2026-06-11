@@ -1,0 +1,86 @@
+[
+  {
+    "id": "CON-NH48-001",
+    "highwayName": "NH-48 (Delhi-Jaipur Highway)",
+    "contractorName": "L&T Infrastructure Development Projects Ltd",
+    "allocatedBudgetRupees": "452,50,00,000",
+    "allocatedBudgetWords": "₹452.5 Crores",
+    "maintenancePeriod": "2023 - 2028",
+    "status": "Active (Under Warranty)",
+    "latitude": 28.6139,
+    "longitude": 77.2090,
+    "rangeKm": 250
+  },
+  {
+    "id": "CON-NH4-002",
+    "highwayName": "NH-4 (Mumbai-Pune Expressway Section)",
+    "contractorName": "IRB Infrastructure Developers Ltd",
+    "allocatedBudgetRupees": "320,40,00,000",
+    "allocatedBudgetWords": "₹320.4 Crores",
+    "maintenancePeriod": "2024 - 2029",
+    "status": "Active (Maintenance Phase)",
+    "latitude": 19.0760,
+    "longitude": 72.8777,
+    "rangeKm": 200
+  },
+  {
+    "id": "CON-NH19-003",
+    "highwayName": "NH-19 (Varanasi-Kolkata Section)",
+    "contractorName": "Ashoka Buildcon Ltd",
+    "allocatedBudgetRupees": "589,75,00,000",
+    "allocatedBudgetWords": "₹589.75 Crores",
+    "maintenancePeriod": "2022 - 2027",
+    "status": "Active (Operation & Maintenance)",
+    "latitude": 25.3176,
+    "longitude": 82.9739,
+    "rangeKm": 300
+  },
+  {
+    "id": "CON-NH44-004",
+    "highwayName": "NH-44 (Bangalore-Hosur Highway Section)",
+    "contractorName": "Dilip Buildcon Ltd",
+    "allocatedBudgetRupees": "210,00,00,000",
+    "allocatedBudgetWords": "₹210.0 Crores",
+    "maintenancePeriod": "2025 - 2030",
+    "status": "Active (Defect Liability Period)",
+    "latitude": 12.9716,
+    "longitude": 77.5946,
+    "rangeKm": 150
+  },
+  {
+    "id": "CON-NH32-005",
+    "highwayName": "NH-32 (Chennai Bypass Corridor)",
+    "contractorName": "Sadbhav Engineering Ltd",
+    "allocatedBudgetRupees": "185,50,00,000",
+    "allocatedBudgetWords": "₹185.5 Crores",
+    "maintenancePeriod": "2021 - 2026",
+    "status": "Active (Maintenance Extension)",
+    "latitude": 13.0827,
+    "longitude": 80.2707,
+    "rangeKm": 120
+  },
+  {
+    "id": "CON-NH27-006",
+    "highwayName": "NH-27 (Guwahati East-West Corridor)",
+    "contractorName": "HG Infra Engineering Ltd",
+    "allocatedBudgetRupees": "612,30,00,000",
+    "allocatedBudgetWords": "₹612.3 Crores",
+    "maintenancePeriod": "2023 - 2028",
+    "status": "Active (Under Construction & Maintenance)",
+    "latitude": 26.1158,
+    "longitude": 91.7086,
+    "rangeKm": 400
+  },
+  {
+    "id": "CON-GEN-999",
+    "highwayName": "National Highway Local Zone (Secondary Route)",
+    "contractorName": "NHAI Zonal Construction Co. (Local Contractor JV)",
+    "allocatedBudgetRupees": "85,00,00,000",
+    "allocatedBudgetWords": "₹85.0 Crores",
+    "maintenancePeriod": "2024 - 2027",
+    "status": "Active (Zonal Maintenance Contract)",
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "rangeKm": 9999999
+  }
+]

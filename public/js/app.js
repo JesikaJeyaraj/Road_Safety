@@ -4,6 +4,7 @@ let clientGpsCoords = null; // Coordinates extracted from photo EXIF
 let browserGpsCoords = null; // Browser geolocation coordinates
 let mainMap = null;
 let mainMarker = null;
+let currentLanguage = 'en';
 
 // Initialize components when page loads
 document.addEventListener('DOMContentLoaded', () => {
@@ -37,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Poll complaints list if admin tab loaded
   loadAdminData();
+
+  // Initialize Language Switcher
+  changeLanguage('en');
 });
 
 /**
@@ -427,6 +431,35 @@ function displayTrackingInfo(complaint) {
 
   document.getElementById('track-val-piu').innerText = complaint.piuEmailMapping.name;
   document.getElementById('dispatch-piu-desc').innerText = `Emailed complaint details to Project Director at: ${complaint.piuEmailMapping.email}`;
+
+  // Render Contractor Ledger Details
+  const contractorSection = document.getElementById('track-contractor-section');
+  if (complaint.contractorDetails) {
+    document.getElementById('track-val-contractor').innerText = complaint.contractorDetails.contractorName;
+    document.getElementById('track-val-budget').innerText = `${complaint.contractorDetails.allocatedBudgetWords} (INR ${complaint.contractorDetails.allocatedBudgetRupees})`;
+    document.getElementById('track-val-period').innerText = complaint.contractorDetails.maintenancePeriod;
+    document.getElementById('track-val-contract-status').innerText = complaint.contractorDetails.status;
+    contractorSection.style.display = 'block';
+  } else {
+    contractorSection.style.display = 'none';
+  }
+
+  // Render Hazard Severity Gauge
+  const hazardSection = document.getElementById('track-hazard-section');
+  if (complaint.hazardResults) {
+    document.getElementById('track-val-severity-score').innerText = `${complaint.hazardResults.score} / 100`;
+    
+    const levelEl = document.getElementById('track-val-severity-level');
+    levelEl.innerText = complaint.hazardResults.level.toUpperCase();
+    
+    // Clean old severity classes
+    levelEl.className = 'info-value';
+    levelEl.classList.add(`severity-${complaint.hazardResults.level.toLowerCase()}`);
+    
+    hazardSection.style.display = 'block';
+  } else {
+    hazardSection.style.display = 'none';
+  }
   
   // PDF and Email link bindings
   document.getElementById('btn-download-pdf').href = complaint.pdfUrl;
@@ -630,4 +663,37 @@ function populateEmailsTable(emails) {
     `;
     tbody.appendChild(tr);
   });
+}
+
+/**
+ * Handles client-side multilingual translation toggling
+ */
+function changeLanguage(lang) {
+  currentLanguage = lang;
+  if (!window.translations || !window.translations[lang]) return;
+
+  const dictionary = window.translations[lang];
+
+  // Update all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dictionary[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = dictionary[key];
+      } else {
+        el.innerText = dictionary[key];
+      }
+    }
+  });
+
+  // Specifically handle placeholder fields that might not be static or need specific translation
+  const descInput = document.getElementById('description-input');
+  if (descInput && dictionary.placeholder_details) {
+    descInput.placeholder = dictionary.placeholder_details;
+  }
+  
+  const searchInput = document.getElementById('search-id-input');
+  if (searchInput && dictionary.placeholder_search) {
+    searchInput.placeholder = dictionary.placeholder_search;
+  }
 }
