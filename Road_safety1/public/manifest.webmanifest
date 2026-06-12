@@ -1,0 +1,19 @@
+{
+  "name": "Road Defect Complaint Portal",
+  "short_name": "Road Safety",
+  "description": "AI-powered road defect reporting with GPS verification and authority routing.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0d14",
+  "theme_color": "#0a0d14",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/road-safety.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

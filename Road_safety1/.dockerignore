@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+sent_emails
+public/uploads
+public/pdfs
+data/complaints.json
+services/__pycache__
+*.pyc
+.env
