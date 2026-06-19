@@ -22,32 +22,7 @@ graph TD
     G -->|Retrieve Status & Timeline| J[Tracking Dashboard]
 ```
 
----
 
-## 👥 Team Roles & Integration Blueprint
-
-This codebase acts as the central integration base for our project. Here is how our team's deliverables map to the codebase:
-
-### 1. Jesika (Completed & Fully Operational)
-* **Intake Interface**: HTML5 Drag-and-drop form with Leaflet map pinpointing.
-* **Originality Audit Engine**: Validates image EXIF geotags, checks timestamp differences, audits editing software traces, and scans image SHA-256/pixel fingerprints to reject duplicate uploads.
-* **Model Integration Module**: Serves classifications and coordinates.
-* **Complaint Letter PDF Compiler**: Generates formatted A4 PDF letters with official headers, metadata metrics, and embedded image evidence.
-* **PIU Email Router**: Calculates geodesic distances using the Haversine formula to map coordinates to regional PIU offices (Delhi, Mumbai, Varanasi, Bangalore, Chennai, Guwahati, Kolkata) and logs dispatch files.
-* **Tracking System**: A step-by-step workflow tracking timeline.
-
-### 2. Hemhalatha (Integration Hooks Prepared)
-* **Model Training Integration**: Hook points are created inside `services/modelService.js`. When your road defect trained model is ready, toggle `USE_REAL_MODEL_API` to `true` to direct image streams to your classification API.
-* **Heatmap Generation**: All coordinates, timestamps, and categories are saved inside `data/complaints.json`. You can read this database file on your heatmap UI and plot coordinates onto Leaflet/Google maps.
-* **Multilingual UI Support**: CSS and layout tags are fully structured to easily map translation JSON elements on the frontend.
-
-### 3. Meenakshi (Integration Hooks Prepared)
-* **AI Chatbot with RAG**: Chat UI placeholders and Express backend server handles are structured. You can mount your chatbot endpoint inside `server.js` and serve it through the frontend UI.
-* **Country Onboarding Framework**: Data onboarding APIs can read and push records through `POST /api/complaints` and `GET /api/complaints`.
-
----
-
----
 
 ## 📝 Recent Updates & Bug Fixes
 
