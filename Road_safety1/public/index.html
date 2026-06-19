@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0d14">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Road Safety">
+  <title>NHAI Citizen Safety & Road Defect Portal</title>
+  <meta name="description" content="File road safety reports, verify image integrity, automatically route letters to NHAI Project units.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <div class="logo-icon">▲</div>
+        <span>NHAI Citizen Safety Portal</span>
+      </div>
+      <nav>
+        <button class="nav-tab active" id="tab-report-btn" onclick="switchTab('report')">Report Issue</button>
+        <button class="nav-tab" id="tab-track-btn" onclick="switchTab('track')">Track Complaint</button>
+        <button class="nav-tab" id="tab-admin-btn" onclick="switchTab('admin')">Admin Panel</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- TAB 1: REPORT ISSUE -->
+    <section id="tab-report" class="tab-content active">
+      <h1>Report Road Defect</h1>
+      <p class="subtitle">Upload a geotagged photo of highway damage. Our system will verify its location and route a formal complaint letter to the respective NHAI PIU.</p>
+      
+      <div class="grid-container">
+        <!-- Form Block -->
+        <div class="glass-card">
+          <form id="complaint-form" onsubmit="submitComplaint(event)">
+            
+            <div class="form-group">
+              <label class="form-label" for="category-select">Issue Category</label>
+              <select class="form-select" id="category-select" required>
+                <option value="" disabled selected>Select road damage type</option>
+                <option value="pothole">Pothole</option>
+                <option value="cracks">Crack</option>
+                <option value="rutting">Rutting</option>
+                <option value="edge_break">Edge break</option>
+                <option value="surface_erosion">Surface erosion</option>
+                <option value="waterlogging">Waterlogging</option>
+                <option value="shoulder_damage">Shoulder damage</option>
+                <option value="road_sinking">Road sinking</option>
+                <option value="other">Other Road Hazard</option>
+              </select>
+            </div>
+
+            <div class="auto-context-panel" id="auto-context-panel">
+              <div class="context-grid">
+                <div>
+                  <span class="context-label">GPS Location</span>
+                  <strong id="auto-gps">Waiting for image GPS</strong>
+                </div>
+                <div>
+                  <span class="context-label">Road Name</span>
+                  <strong id="auto-road-name">--</strong>
+                </div>
+                <div>
+                  <span class="context-label">Road Type</span>
+                  <strong id="auto-road-type">--</strong>
+                </div>
+                <div>
+                  <span class="context-label">Authority</span>
+                  <strong id="auto-authority">--</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="auto-context-panel">
+              <div class="verification-header">
+                <span class="verification-title">Road Details</span>
+                <span class="badge badge-neutral">Confirm</span>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="state-select">State</label>
+                  <select class="form-select" id="state-select" onchange="handleRoadOptionChange('state')" required></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="district-select">District</label>
+                  <select class="form-select" id="district-select" onchange="handleRoadOptionChange('district')" required></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="area-select">Area</label>
+                  <select class="form-select" id="area-select" onchange="handleRoadOptionChange('area')" required></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="road-name-select">Road Name</label>
+                  <select class="form-select" id="road-name-select" onchange="handleRoadOptionChange('road')" required></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="road-type-select">Road Type</label>
+                  <select class="form-select" id="road-type-select" required></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="highway-no-select">Highway No</label>
+                  <select class="form-select" id="highway-no-select"></select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="description-input">Description / Details</label>
+              <textarea class="form-textarea" id="description-input" placeholder="Provide details (e.g. landmark, Highway name, size of pothole, lane side) to assist maintenance units..." required></textarea>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="landmark-input">Landmark Near Defect</label>
+                <input type="text" class="form-input" id="landmark-input" placeholder="e.g. Near toll plaza or bus stop">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="direction-select">Direction of Travel</label>
+                <select class="form-select" id="direction-select">
+                  <option value="">Select direction</option>
+                  <option value="Northbound">Northbound</option>
+                  <option value="Southbound">Southbound</option>
+                  <option value="Eastbound">Eastbound</option>
+                  <option value="Westbound">Westbound</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="dimensions-input">Estimated Defect Size</label>
+                <input type="text" class="form-input" id="dimensions-input" placeholder="e.g. 1m x 0.5m, lane-wide">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="traffic-impact-select">Traffic Impact Level</label>
+                <select class="form-select" id="traffic-impact-select">
+                  <option value="">Select impact</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="safety-risk-select">Safety Risk Level</label>
+                <select class="form-select" id="safety-risk-select">
+                  <option value="">Select risk</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="ai-enrichment-panel" id="ai-enrichment-panel">
+              <div class="verification-header">
+                <span class="verification-title">AI Complaint Enrichment</span>
+                <span id="ai-enrichment-badge" class="badge badge-neutral">Waiting</span>
+              </div>
+              <div class="context-grid">
+                <div>
+                  <span class="context-label">Model Decision</span>
+                  <strong id="ai-category">--</strong>
+                </div>
+                <div>
+                  <span class="context-label">Severity</span>
+                  <strong id="ai-severity">--</strong>
+                </div>
+                <div>
+                  <span class="context-label">Urgency</span>
+                  <strong id="ai-urgency">--</strong>
+                </div>
+                <div>
+                  <span class="context-label">Confidence</span>
+                  <strong id="ai-confidence">--</strong>
+                </div>
+              </div>
+              <button type="button" class="btn btn-secondary compact-btn" id="apply-ai-btn" onclick="applyAiSuggestion()" disabled>Apply AI Suggestion</button>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Evidence Media (Photo/Video)</label>
+              <div class="upload-zone" id="drop-zone">
+                <button type="button" class="btn btn-secondary compact-btn upload-action-button" id="upload-action-btn" onclick="showUploadSheet()">
+                  Upload Image
+                </button>
+                <div class="upload-summary" id="upload-summary">
+                  <p class="upload-text-main">Tap to choose camera or gallery</p>
+                  <p class="upload-text-sub">Photo GPS will auto-populate location fields.</p>
+                </div>
+              </div>
+
+              <div class="bottom-sheet-overlay" id="upload-sheet" onclick="closeUploadSheet()">
+                <div class="sheet-panel" onclick="event.stopPropagation()">
+                  <button type="button" class="sheet-item" onclick="triggerCameraInput()">Take Photo</button>
+                  <button type="button" class="sheet-item" onclick="triggerGalleryInput()">Choose from Gallery</button>
+                  <button type="button" class="sheet-item sheet-cancel" onclick="closeUploadSheet()">Cancel</button>
+                </div>
+              </div>
+
+              <div class="camera-modal-overlay" id="camera-modal" onclick="closeCameraModal()">
+                <div class="camera-modal-panel" onclick="event.stopPropagation()">
+                  <div class="camera-header">
+                    <span>Camera Capture</span>
+                    <button type="button" class="sheet-item sheet-cancel compact-btn" onclick="closeCameraModal()">Close</button>
+                  </div>
+                  <video id="camera-preview" autoplay playsinline muted></video>
+                  <div class="camera-controls">
+                    <button type="button" class="sheet-item" onclick="captureCameraPhoto()">Capture Photo</button>
+                  </div>
+                </div>
+              </div>
+
+              <input type="file" id="camera-file" class="file-input" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
+              <input type="file" id="gallery-file" class="file-input" accept="image/*" onchange="handleFileSelect(event)">
+            </div>
+
+            <button type="submit" class="btn" id="submit-btn" disabled>
+              <span>Submit Verified Complaint</span>
+            </button>
+            
+          </form>
+        </div>
+
+        <!-- Verification/Realtime Preview Block -->
+        <div class="glass-card" style="display: flex; flex-direction: column;">
+          <div class="verification-header">
+            <span class="verification-title">Evidence & Geo-tags Analysis</span>
+            <span id="analysis-badge" class="badge badge-neutral">No media selected</span>
+          </div>
+
+          <!-- Image Preview Frame -->
+          <div class="preview-container" id="image-preview-frame">
+            <!-- Scan line overlay -->
+            <div class="scanner-overlay" id="scanner-laser">
+              <div class="scanner-line"></div>
+              <div class="scanner-text" id="scanner-label">Inference engine scanning...</div>
+            </div>
+            <img src="" alt="Complaint Preview" class="preview-image" id="preview-img-element">
+          </div>
+
+          <!-- GPS Metadata list details -->
+          <div class="verify-checklist">
+            <div class="verify-item">
+              <div class="verify-label"><span>📍</span> GPS coordinates:</div>
+              <div class="verify-val" id="meta-coords">--</div>
+            </div>
+            <div class="verify-item">
+              <div class="verify-label"><span>📅</span> Capture Time:</div>
+              <div class="verify-val" id="meta-time">--</div>
+            </div>
+            <div class="verify-item">
+              <div class="verify-label"><span>📱</span> Device Model:</div>
+              <div class="verify-val" id="meta-device">--</div>
+            </div>
+            <div class="verify-item">
+              <div class="verify-label"><span>🛠️</span> Editing Software:</div>
+              <div class="verify-val" id="meta-software">--</div>
+            </div>
+          </div>
+
+          <!-- Map Box -->
+          <div id="map-container"></div>
+          <p class="map-helper" id="map-helper">Use current GPS or pick a point on the map if the photo has no geotag.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: TRACK COMPLAINT -->
+    <section id="tab-track" class="tab-content">
+      <h1>Complaint Tracking Dashboard</h1>
+      <p class="subtitle">Search and monitor the resolution workflow of filed road safety complaints using your Reference ID.</p>
+      
+      <!-- Search -->
+      <div class="search-wrapper">
+        <input type="text" class="search-input" id="search-id-input" placeholder="Enter Complaint ID (e.g. NHAI-2026-B83A49D0)">
+        <button class="btn search-btn" onclick="trackComplaint()">Search</button>
+      </div>
+
+      <!-- Tracking Results -->
+      <div class="tracking-result-panel" id="tracking-panel">
+        <div class="grid-container">
+          
+          <!-- Stepper timeline -->
+          <div class="glass-card">
+            <h3>Workflow Resolution Stages</h3>
+            
+            <div class="timeline" id="tracking-timeline">
+              <!-- Step 1 -->
+              <div class="timeline-step" id="step-submitted">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <div class="timeline-title">1. Complaint Registered</div>
+                  <div class="timeline-desc">Defect submitted by citizen and logged in server database.</div>
+                  <div class="timeline-meta" id="step-submitted-time">--</div>
+                </div>
+              </div>
+              
+              <!-- Step 2 -->
+              <div class="timeline-step" id="step-verified">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <div class="timeline-title">2. Integrity & Originality Check</div>
+                  <div class="timeline-desc">Geotags extracted, timestamp checked for age, and unique image hash verified.</div>
+                  <div class="timeline-meta" id="step-verified-time">--</div>
+                </div>
+              </div>
+              
+              <!-- Step 3 -->
+              <div class="timeline-step" id="step-ai">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <div class="timeline-title">3. AI Computer Vision Verification</div>
+                  <div class="timeline-desc">Model scanning isolates exact defect classifications and bounding regions.</div>
+                  <div class="timeline-meta" id="step-ai-time">--</div>
+                </div>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="timeline-step" id="step-pdf">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <div class="timeline-title">4. Complaint Letter Generated</div>
+                  <div class="timeline-desc">Official document created with letterhead stamps and coordinates.</div>
+                  <div class="timeline-meta" id="step-pdf-time">--</div>
+                </div>
+              </div>
+
+              <!-- Step 5 -->
+              <div class="timeline-step" id="step-emailed">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <div class="timeline-title">5. Dispatched to regional NHAI PIU</div>
+                  <div class="timeline-desc" id="dispatch-piu-desc">Emailed to closest Project Director based on GPS boundary mapping.</div>
+                  <div class="timeline-meta" id="step-emailed-time">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Incident details review panel -->
+          <div class="glass-card" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div class="verification-header">
+              <span class="verification-title" id="track-title-id">Complaint ID: --</span>
+              <span id="track-status-badge" class="badge badge-neutral">--</span>
+            </div>
+            
+            <div style="border-radius: 0.5rem; overflow: hidden; border: 1px solid var(--border-card);">
+              <img src="" id="track-image" alt="Evidence" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+            </div>
+
+            <!-- Detail Pills -->
+            <div>
+              <div class="info-row">
+                <span class="info-label">Category (AI Class):</span>
+                <span class="info-value" id="track-val-class">--</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Confidence:</span>
+                <span class="info-value" id="track-val-confidence">--</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">GPS Location:</span>
+                <span class="info-value gps-link" id="track-val-gps" onclick="showTrackedOnMap()">--</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Routed PIU Office:</span>
+                <span class="info-value" id="track-val-piu">--</span>
+              </div>
+            </div>
+
+            <div id="track-flags-container"></div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: auto;">
+              <a href="" id="btn-download-pdf" target="_blank" class="btn">
+                <span>View Letter PDF</span>
+              </a>
+              <a href="" id="btn-view-email" target="_blank" class="btn btn-secondary">
+                <span>Inspect Email log</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: ADMIN PANEL -->
+    <section id="tab-admin" class="tab-content">
+      <h1>NHAI Management Dashboard</h1>
+      <p class="subtitle">System administrator oversight, verification auditing, duplicate tracking, and email routing history logs.</p>
+      
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total" style="color: var(--primary);">0</div>
+          <div class="stat-label">Total Filed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-verified" style="color: var(--success);">0</div>
+          <div class="stat-label">Verified Original</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-flagged" style="color: var(--danger);">0</div>
+          <div class="stat-label">Flagged Suspicious</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-routed" style="color: var(--purple);">0</div>
+          <div class="stat-label">Emails Dispatched</div>
+        </div>
+      </div>
+
+      <!-- Geospatial Heatmap -->
+      <div class="glass-card heatmap-card">
+        <div class="dashboard-section-header">
+          <div>
+            <h3>Geospatial Complaint Heatmap</h3>
+            <p class="section-subtitle">Density hotspots by defect category, severity, and filing period.</p>
+          </div>
+          <div class="heatmap-density-pill">
+            <span id="heatmap-visible-count">0</span>
+            <span>mapped complaints</span>
+          </div>
+        </div>
+
+        <div class="heatmap-controls">
+          <div class="form-group">
+            <label class="form-label" for="heatmap-category-filter">Category</label>
+            <select class="form-select" id="heatmap-category-filter" onchange="applyHeatmapFilters()">
+              <option value="all">All categories</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="heatmap-severity-filter">Severity</label>
+            <select class="form-select" id="heatmap-severity-filter" onchange="applyHeatmapFilters()">
+              <option value="all">All severity levels</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="heatmap-time-filter">Time range</label>
+            <select class="form-select" id="heatmap-time-filter" onchange="applyHeatmapFilters()">
+              <option value="all">All time</option>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="admin-heatmap"></div>
+      </div>
+
+      <!-- Complaints Table -->
+      <div class="glass-card" style="margin-bottom: 2rem;">
+        <h3 style="margin-bottom: 1rem;">Recent Citizens Reports</h3>
+        <div class="table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Complaint ID</th>
+                <th>Category</th>
+                <th>Location (GPS)</th>
+                <th>Originality Score</th>
+                <th>Status</th>
+                <th>Date Filed</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-complaints-table-body">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-secondary);">No complaint submissions found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Email dispatch log activity -->
+      <div class="glass-card">
+        <h3 style="margin-bottom: 1rem;">Auto-Email Dispatches to PIU Offices</h3>
+        <div class="table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Incident ID</th>
+                <th>Recipient PIU</th>
+                <th>PIU Email Address</th>
+                <th>Email Subject</th>
+                <th>Routed Timestamp</th>
+                <th>Logs</th>
+              </tr>
+            </thead>
+            <tbody id="admin-email-logs-table-body">
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-secondary);">No routing activity logs recorded.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  
+  <!-- Client ExifReader CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/exifreader@4.23.3/dist/exif-reader.js"></script>
+
+  <!-- Frontend logic App JS -->
+  <script src="/js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').catch(err => {
+          console.warn('Service worker registration failed:', err.message);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
